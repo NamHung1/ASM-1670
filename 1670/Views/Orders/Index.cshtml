@@ -1,0 +1,85 @@
+﻿@model ICollection<Order>
+@using System.Security.Claims
+
+@{
+    ClaimsPrincipal currentUser = this.User;
+    var UserId = currentUser.FindFirst(ClaimTypes.NameIdentifier).Value;
+}
+
+<h1>Orders</h1>
+
+<div class="container text-center mt-3">
+    @if (@TempData["Message"] != null)
+    {
+        <p class="alert alert-danger">@TempData["Message"]</p>
+    }
+</div>
+
+<script src="~/js/jquery.min.js"></script>
+@if (User.IsInRole("Admin"))
+{
+    <!-- Admin section -->
+    <table class="table table-hover table-bordered text-center">
+        <thead class="text-dark fw-bold">
+            <tr>
+                <th>Order ID</th>
+                <th>User ID</th>
+                <th>Order Time</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model)
+            {
+                <tr>
+                    <td>@order.Id</td>
+                        @foreach(var user in ViewBag.User)
+                        {
+                            if(user.Id == order.UserId)
+                            {
+                                <td>@user.Email</td>
+                            }
+                        }
+                    <td>@order.OrderTime</td>
+                    <td>
+                        <a class="btn btn-outline-danger" asp-controller="Orders" asp-action="DeleteOrder" asp-route-id="@order.Id"
+                           onclick="return confirm('Are you sure to delete this order?');">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else if (User.Identity.IsAuthenticated)
+{
+    <!-- User section -->
+    <table class="table table-hover table-bordered text-center">
+        <thead class="text-dark fw-bold">
+            <tr>
+                <th>Order ID</th>
+                <th>User ID</th>
+                <th>Order Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model)
+            {
+                <tr>
+                    <td>@order.Id</td>
+                    @foreach (var user in ViewBag.User)
+                    {
+                        if (user.Id == order.UserId)
+                        {
+                            <td>@user.Email</td>
+                        }
+                    }
+                    <td>@order.OrderTime</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Please log in to view orders.</p>
+}

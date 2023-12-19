@@ -1,0 +1,69 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+
+@*<style>
+    td, th {
+        padding: 10px;
+    }
+</style>
+<script src="~/js/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $(".updateCart").click(function (event) {
+            event.preventDefault();
+            var quantity = $(".quantity_" + $(this).attr("data-id")).val();
+            console.log(quantity);
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("updateCart", "Cart")",
+                data: {
+                    id: $(this).attr("data-id"),
+                    quantity: quantity
+                },
+                success: function (result) {
+                    window.location.href = '@Url.Action("Index", "Cart")';
+                }
+            });
+        });
+    });
+</script>
+<div class="list-cart">
+    <table class="cart" border="1">
+        <tr>
+            <th>STT</th>
+            <th>Name</th>
+            <th>Image</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Total Price</th>
+            <th>Update</th>
+            <th>Delete</th>
+        </tr>
+        @{
+            int STT = 0;
+            foreach (var item in ViewBag.carts)
+            {
+                string txt_class = "quantity_" + item.Product.Id;
+                STT++;
+
+                decimal total = item.Product.Price * item.Quantity;
+
+                <tr>
+                    <td>@STT</td>
+                    <td>@item.Product.Name</td>
+                    <td><img src="~/images/@item.Product.Image" width="100" height="100" /></td>
+                    <td><input type="number" class="@txt_class" value="@item.Quantity" /></td>
+                    <td>@item.Product.Price</td>
+                    <td>@total</td>
+                    <td><a href="" data-id="@item.Product.Id" class="updateCart">Update</a></td>
+                    <td><a asp-controller="Cart" asp-action="deleteCart" asp-route-id="@item.Product.Id">Delete</a></td>
+                </tr>
+            }
+        }
+
+    </table>
+</div>*@
+
+
